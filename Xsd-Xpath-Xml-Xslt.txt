@@ -1,0 +1,389 @@
+----------------Xml-----------------
+<note>
+    <to>Tove</to>
+    <from>Jani</from>
+    <heading>Reminder</heading>
+    <body attachements="55" >Don't forget me this weekend!</body>
+    <resend count="5">
+        <employee>hamed</employee>
+    </resend>
+</note>
+
+
+-----------------Xpath--------------
+
+note                /=> select all note elements in the document
+
+/note               /=> selects the root element note
+
+note/to             /=> selects all the to elements under note
+
+//to                /=> selects all the to element no matter where
+
+note//to            /=> selects all the to element descendant of the note element no matter where they are under
+
+//@attachements     /=> selects all the attachements attributs 
+
+.                   /=> selects current node
+
+..                  /=> selects parent node
+
+*                   /=> selects any element node
+
+//*                 /=> selects all the elements
+
+//body[@*]          /=> selects all body elements that have at least one attr
+
+//descendant::book  /=> selects all the book descendants
+
+//ancestor::book	/=> selects all the book ancestor
+
+
+---predicates Xpath----
+Predicates are used to find a specific node or a node that contains a specific value.
+
+/note/to[1]                                 /=> selects the first to element inside the note
+
+/note/to[last()]                            /=> selects the last to element inside the note
+
+/note/to[last()-1]                          /=> selects the before last element inside note
+
+/note/to[position()<3]                      /=> selects the first two element inside note
+
+//body[@attachment]                         /=> selects all the body elements that have the attachement attr
+
+//body[@attachment='12']	                /=> selects all the body elements that have attachement attr equals to 12
+
+/note/resend[employee="hamed"]/heading      /=> selects all the heading elements of note that have an employee value "hamed"
+
+/note/*	                                    /=> selects all child elements
+
+//note/to | //note/from                     /=> selects all the to and from elements of all note element	
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------------------------DTD-----------------------------
+Declaring Elements
+
+<!ELEMENT element-name category>
+or
+<!ELEMENT element-name (element-content)>
+
+------
+
+Empty Elements
+
+<!ELEMENT element-name EMPTY>
+
+Example:
+
+<!ELEMENT br EMPTY>
+
+------
+
+Element with parced data
+
+<!ELEMENT element-name (#PCDATA)>
+
+Example:
+
+<!ELEMENT from (#PCDATA)>
+
+-------
+
+Elements with any
+Elements declared with the category keyword ANY, can contain any combination of parsable data
+
+<!ELEMENT element-name ANY>
+
+Example:
+
+<!ELEMENT note ANY>
+
+-------
+
+Elements with Children (sequences)
+
+<!ELEMENT element-name (child1)>
+or
+<!ELEMENT element-name (child1,child2,...)>
+
+Example:
+
+<!ELEMENT note (to,from,heading,body)>
+
+
+
+--------Occurence-------
+
+One time occure
+<!ELEMENT element-name (child-name)>
+
+
+minimum one occurence
+<!ELEMENT element-name (child-name+)>
+
+zero or more
+<!ELEMENT element-name (child-name*)>
+
+Zero or One Occurrences
+<!ELEMENT note (message?)>
+
+either/or meesage/body
+<!ELEMENT note (to,from,header,(message|body))>
+
+Mixed 
+The example above declares that the "note" element can contain zero or more occurrences of parsed character data, "to", "from", "header", or "message" elements.
+<!ELEMENT note (#PCDATA|to|from|header|message)*>
+
+
+--------Attributes--------
+
+<!ATTLIST element-name attribute-name attribute-type attribute-value>
+
+DTD example:
+
+<!ATTLIST payment type CDATA "check">
+
+XML example:
+
+<payment type="check" />
+
+
+value	The default value of the attribute
+
+#REQUIRED	The attribute is required
+#IMPLIED	The attribute is optional
+#FIXED value	The attribute value is fixed
+
+example:
+<!ATTLIST person number CDATA #REQUIRED>
+
+Enumerated Attribute Values
+
+DTD:
+<!ATTLIST element-name attribute-name (en1|en2|..) default-value>
+
+<!ATTLIST payment type (check|cash) "cash">
+
+XML example:
+<payment type="check" />
+or
+<payment type="cash" />
+
+
+
+-------------------------XSD-----------------------------
+
+
+---XSD Elements
+<employee>
+  <firstname>John</firstname>
+  <lastname>Smith</lastname>
+</employee>
+
+<xs:element name="employee"> <-- complex element
+  <xs:complexType>
+    <xs:sequence>
+      <xs:element name="firstname" type="xs:string"/>  <---- simple element
+      <xs:element name="lastname" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:element>
+
+--Empty Element
+<product prodid="1345" />
+
+<xs:element name="product">
+  <xs:complexType>
+    <xs:complexContent>
+      <xs:restriction base="xs:integer">
+        <xs:attribute name="prodid" type="xs:positiveInteger"/>
+      </xs:restriction>
+    </xs:complexContent>
+  </xs:complexType>
+</xs:element>
+
+--mixed Element
+<letter>
+  Dear Mr. <name>John Smith</name>.
+  Your order <orderid>1032</orderid>
+  will be shipped on <shipdate>2001-07-13</shipdate>.
+</letter>
+
+<xs:element name="letter">
+  <xs:complexType mixed="true">
+    <xs:sequence>
+      <xs:element name="name" type="xs:string"/>
+      <xs:element name="orderid" type="xs:positiveInteger"/>
+      <xs:element name="shipdate" type="xs:date"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:element>
+
+--The <any> Element
+The <any> element enables us to extend the XML document with elements not specified by the schema.
+
+<xs:element name="person">
+  <xs:complexType>
+    <xs:sequence>
+      <xs:element name="firstname" type="xs:string"/>
+      <xs:element name="lastname" type="xs:string"/>
+      <xs:any minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:element>
+
+
+--The <anyAttribute> Element
+The <anyAttribute> element enables us to extend the XML document with attributes not specified by the schema.
+
+<xs:element name="person">
+  <xs:complexType>
+    <xs:sequence>
+      <xs:element name="firstname" type="xs:string"/>
+      <xs:element name="lastname" type="xs:string"/>
+    </xs:sequence>
+    <xs:anyAttribute/>
+  </xs:complexType>
+</xs:element>
+
+
+------Indicators
+
+--All Indicator
+The <all> indicator specifies that the child elements can appear in any order, and that each child element must occur only once:
+
+<xs:element name="person">
+  <xs:complexType>
+    <xs:all>
+      <xs:element name="firstname" type="xs:string"/>
+      <xs:element name="lastname" type="xs:string"/>
+    </xs:all>
+  </xs:complexType>
+</xs:element>
+
+
+--choice indicator
+The <choice> indicator specifies that either one child element or another can occur:
+
+<xs:element name="person">
+  <xs:complexType>
+    <xs:choice>
+      <xs:element name="employee" type="employee"/>
+      <xs:element name="member" type="member"/>
+    </xs:choice>
+  </xs:complexType>
+</xs:element>
+
+
+--Sequence Indicator
+The <sequence> indicator specifies that the child elements must appear in a specific order:
+
+<xs:element name="person">
+   <xs:complexType>
+    <xs:sequence>
+      <xs:element name="firstname" type="xs:string"/>
+      <xs:element name="lastname" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:element>
+
+
+--Occurrence Indicators
+--maxOccurs
+The <maxOccurs> indicator specifies the maximum number of times an element can occur:
+
+<xs:element name="person">
+  <xs:complexType>
+    <xs:sequence>
+      <xs:element name="full_name" type="xs:string"/>
+      <xs:element name="child_name" type="xs:string" maxOccurs="10"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:element>
+
+--minOccurs
+The <minOccurs> indicator specifies the minimum number of times an element can occur:
+
+<xs:element name="person">
+  <xs:complexType>
+    <xs:sequence>
+      <xs:element name="full_name" type="xs:string"/>
+      <xs:element name="child_name" type="xs:string"
+      maxOccurs="10" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:element>
+
+
+
+
+-------------------XSLT---------------------
+
+example
+
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0"
+xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+
+<xsl:template match="/">
+  <html>
+  <body>
+  <h2>My CD Collection</h2>
+  <table border="1">
+    <tr bgcolor="#9acd32">
+      <th>Title</th>
+      <th>Artist</th>
+      <th>Price</th>
+    </tr>
+    <xsl:for-each select="catalog/cd">
+      <xsl:if test="price &gt; 10">
+        <tr>
+          <td><xsl:value-of select="title"/></td>
+          <td><xsl:value-of select="artist"/></td>
+          <td><xsl:value-of select="price"/></td>
+        </tr>
+      </xsl:if>
+    </xsl:for-each>
+  </table>
+  </body>
+  </html>
+</xsl:template>
+
+</xsl:stylesheet>
+
+
+-----<xsl:choose>
+The <xsl:choose> element is used in conjunction with <xsl:when> and <xsl:otherwise> to express multiple conditional tests.
+
+ <table border="1">
+    <tr bgcolor="#9acd32">
+      <th>Title</th>
+      <th>Artist</th>
+    </tr>
+    <xsl:for-each select="catalog/cd">
+    <tr>
+      <td><xsl:value-of select="title"/></td>
+      <xsl:choose>
+        <xsl:when test="price &gt; 10">
+          <td bgcolor="#ff00ff">
+          <xsl:value-of select="artist"/></td>
+        </xsl:when>
+        <xsl:otherwise>
+          <td><xsl:value-of select="artist"/></td>
+        </xsl:otherwise>
+      </xsl:choose>
+    </tr>
+    </xsl:for-each>
+  </table>
